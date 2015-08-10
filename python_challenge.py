@@ -200,6 +200,95 @@ def bull_ex():
     print len(a)
 
 
+def odd_even():
+    from PIL import Image
+    im = Image.open("img/python-challenge-11.jpg")
+    w, h = im.size
+
+    imgs = [Image.new(im.mode, (w / 2, h / 2)) for i in xrange(2)]
+    imgs_load = [img.load() for img in imgs]
+    org = im.load()
+
+    for i in xrange(w):
+        for j in xrange(h):
+            if (i + j) % 2 == 0:
+                org_pos = (i, j)
+                new_pos = (i / 2, j / 2)
+                imgs_load[i % 2][new_pos] = org[org_pos]
+
+    [imgs[i].save('img/python-challenge-11-%d.jpg' % i) for i in xrange(2)]
+
+
+def evil():
+    f = open('files/evil2.gfx', 'rb+')
+    content = f.read()
+    f.close()
+
+    for i in xrange(5):
+        f = open('files/evil2-%d.jpg' % i, 'wb+')
+        f.write(content[i::5])
+        f.close()
+
+
+def disproportional():
+    import xmlrpclib
+    xml_rpc = xmlrpclib.ServerProxy("http://www.pythonchallenge.com/pc/phonebook.php")
+    print xml_rpc.system.listMethods()
+    print xml_rpc.system.methodHelp('phone')
+    print xml_rpc.phone('Bert')
+
+
+def italy_error():
+    from PIL import Image
+    org_img = Image.open('img/wire.png')
+    org_data = list(org_img.getdata())
+    res_img = Image.new(org_img.mode, (100, 100))
+    res_data = res_img.load()
+    org_index = 0
+    for i in xrange(100):
+        for j in xrange(100):
+            res_data[j, i] = org_data[org_index]
+            org_index += 1
+    res_img.save("img/wire-0.png")
+
+
+def italy():
+    from PIL import Image
+    # 100*100 ＝ （100 + 99 + 99 + 98)+(...
+    items = [[i, i-1, i-1, i-2] for i in xrange(100, 1, -2)]
+
+    org_img = Image.open('img/wire.png')
+    org_data = list(org_img.getdata())
+    new_img = Image.new(org_img.mode, (100, 100))
+    new_data = new_img.load()
+
+    index = 0
+    x = y = 0
+    for item in items:
+        for j in xrange(item[0]):
+            new_data[x, y] = org_data[index]
+            x += 1
+            index += 1
+        x -= 1
+        for j in xrange(item[1]):
+            new_data[x, y] = org_data[index]
+            y += 1
+            index += 1
+        y -= 1
+        for j in xrange(item[2]):
+            new_data[x, y] = org_data[index]
+            x -= 1
+            index += 1
+        x += 1
+        for j in xrange(item[3]):
+            new_data[x, y] = org_data[index]
+            y -= 1
+            index += 1
+        y += 1
+
+    new_img.save('img/wire-cat.png')
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -212,7 +301,11 @@ def challenge():
     # integrity()
     # good()
     # bull()
-    bull_ex()
+    # bull_ex()
+    # odd_even()
+    # evil()
+    # disproportional()
+    italy()
     pass
 
 if __name__ == "__main__":
