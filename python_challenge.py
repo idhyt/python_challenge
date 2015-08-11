@@ -55,7 +55,7 @@ def equality():
 
 
 # 遍历页面
-def linkedlist(times=1, param="123456"):
+def linkedlist(times=1, param="12345"):
     try:
         url = "?nothing=".join(["http://www.pythonchallenge.com/pc/def/linkedlist.php", param])
         page_source = requests.get(url).text
@@ -289,6 +289,83 @@ def italy():
     new_img.save('img/wire-cat.png')
 
 
+# run in python 3.0+
+def uzi():
+    from datetime import datetime
+
+    def get_week_day(year_, mouth_, day_):
+        return datetime(year_, mouth_, day_).strftime("%w")
+
+    leap_years = [i for i in range(1006, 1997, 10) if (i % 4 == 0 and i % 100 != 0) or i % 400 == 0]
+    print (leap_years)
+    match_year = [y for y in leap_years if get_week_day(y, 2, 29) == "0"]
+    print (match_year)
+    print ("%d-01-17" % match_year[-2])
+
+
+def mozart():
+    from PIL import Image
+    org_img = Image.open('img/mozart.gif')
+    org_size = org_img.size
+    org_data = list(org_img.getdata())
+
+    # new_img = Image.new(org_img.mode, org_size)
+    new_img = org_img.copy()
+    new_data = new_img.load()
+
+    for y in range(org_size[1]):
+        line_pixels = org_data[org_size[0] * y: org_size[0] * (y + 1)]
+        pink_index = line_pixels.index(195)
+        for x, pixel in enumerate(line_pixels[pink_index:] + line_pixels[:pink_index]):
+            new_data[x, y] = pixel
+
+    new_img.save("img/romance.gif")
+
+
+def romance():
+    import urllib2
+    import cookielib
+    import urllib
+
+    cj = cookielib.CookieJar()
+    handler = urllib2.HTTPCookieProcessor(cj)
+    opener = urllib2.build_opener(handler)
+
+    base_url = "http://www.pythonchallenge.com/pc/def/linkedlist.php"
+    param = "12345"
+    times = 1
+    info = []
+
+    while True:
+        try:
+            url = "?busynothing=".join([base_url, param])
+            page_source = opener.open(url).read()
+            param = re.findall("and the next busynothing is ([0-9]+)", page_source)[0]
+            ck = cj._cookies.values()[0]['/']['info'].value
+            info.append(ck)
+            print "%d -> %s -> %s" % (times, param, ck)
+            times += 1
+        # 匹配不到跳到异常
+        except IndexError:
+            print "the end is : %d" % times
+            break
+
+    message = "".join(info)
+    print message
+    # 转义
+    message = urllib.unquote_plus(message)
+    result = message.decode("bz2")
+    print result
+
+    # ---level 13 code ---#
+
+    # url = "?busynothing=".join([base_url, param])
+    # page_source = opener.open(url).read()
+    cj._cookies.values()[0]['/']['info'].value = 'the+flowers+are+on+their+way'
+    violin_source = opener.open('http://www.pythonchallenge.com/pc/stuff/violin.php').read()
+    print violin_source
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -305,7 +382,10 @@ def challenge():
     # odd_even()
     # evil()
     # disproportional()
-    italy()
+    # italy()
+    # uzi()
+    # mozart()
+    romance()
     pass
 
 if __name__ == "__main__":
