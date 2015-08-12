@@ -366,6 +366,63 @@ def romance():
     print violin_source
 
 
+def balloons():
+    import difflib
+    f_delta = open('files/delta.txt', 'r+')
+    deltas = f_delta.read().split('\n')
+    f_delta.close()
+
+    left_data = []
+    right_data = []
+
+    for line in deltas:
+        left_data.append(line[:53]+'\n')
+        right_data.append(line[56:]+'\n')
+
+    diff = difflib.Differ()
+    cmp_result = list(diff.compare(left_data, right_data))
+
+    left_pic = open('img/18-left-diff.png', 'wb')
+    right_pic = open('img/18-right-diff.png', 'wb')
+    common_pic = open('img/18-common.png', 'wb')
+
+    for line in cmp_result:
+        bytes = [(chr(int(h, 16))) for h in line[2:].split()]
+        if line.startswith('-'):
+            map(left_pic.write, bytes)
+        elif line.startswith('+'):
+            map(right_pic.write, bytes)
+        elif line.startswith(' '):
+            map(common_pic.write, bytes)
+
+    right_pic.close()
+    left_pic.close()
+    common_pic.close()
+
+
+def hex_bin():
+    import base64
+    import wave
+    headers = {
+        "Authorization": "Basic YnV0dGVyOmZseQ=="
+    }
+    page_source = requests.get("http://www.pythonchallenge.com/pc/hex/bin.html", headers=headers).text
+    wav_data = re.findall(r"base64([\s\S]+?)--", page_source)[0].strip("\n")
+    indian = open("files/indian.wav", "wb")
+    indian.write(base64.b64decode(wav_data))
+    indian.close()
+
+    indian = wave.open("files/indian.wav", "rb")
+    reverse = wave.open("files/indian-reverse.wav", "wb")
+    reverse.setnchannels(1)
+    reverse.setframerate(indian.getframerate())
+    reverse.setsampwidth(indian.getsampwidth())
+    for i in range(indian.getnframes()):
+        reverse.writeframes(indian.readframes(1)[::-1])
+    indian.close()
+    reverse.close()
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -385,7 +442,10 @@ def challenge():
     # italy()
     # uzi()
     # mozart()
-    romance()
+    # romance()
+    # balloons()
+    # hex_bin()
+    hex_bin()
     pass
 
 if __name__ == "__main__":
