@@ -11,11 +11,13 @@ import requests
 import re
 
 
+# level 0
 # 2的38次幂
 def calc():
     return 2 ** 38
 
 
+# level 1
 # 右移两位 ocr
 def map_():
     first_alpha = chr(ord("m") + 2)
@@ -24,6 +26,7 @@ def map_():
     return "".join([first_alpha, second_alpha, third_alpha])
 
 
+# level 2
 # 查找出现次数最少的字符 equality
 def ocr():
     stats = {}
@@ -45,6 +48,7 @@ def ocr():
     return "".join(re.findall(r"[a-z]+", mess_content))
 
 
+# level 3
 # 小写字符两边有三个大写字母 linkedlist
 def equality():
     req = requests.get("http://www.pythonchallenge.com/pc/def/equality.html")
@@ -54,6 +58,7 @@ def equality():
     return "".join(re.findall(r"[a-z]{1}[A-Z]{3}([a-z]{1})[A-Z]{3}[a-z]{1}", mess_content))
 
 
+# level 4
 # 遍历页面
 def linkedlist(times=1, param="12345"):
     try:
@@ -69,6 +74,7 @@ def linkedlist(times=1, param="12345"):
         return page_source
 
 
+# level 5
 # pickle模块的使用
 def peak():
     import pickle
@@ -82,6 +88,7 @@ def peak():
         print "".join([tuple_[0] * tuple_[1] for tuple_ in list_])
 
 
+# level 6
 def channel():
     import zipfile
     zf = zipfile.ZipFile("D:\\downloads\\channel.zip")
@@ -102,6 +109,7 @@ def channel():
     print "".join(result)
 
 
+# level 7
 def oxygen():
     from PIL import Image
     img = Image.open("oxygen.png")
@@ -126,6 +134,7 @@ def oxygen():
     print ''.join(result)
 
 
+# level 8
 def integrity():
     import bz2
     # page_source = requests.get("http://www.pythonchallenge.com/pc/def/integrity.html").text
@@ -140,6 +149,7 @@ def integrity():
     print ": ".join(["password", bz2.decompress(pw)])
 
 
+# level 9
 def good():
     from PIL import Image, ImageDraw
     im = Image.new('RGB', (500, 500))
@@ -161,6 +171,7 @@ def good():
         im.save('img/09.jpg')
 
 
+# level 10
 def bull():
 
     def get_next_item(str_item=""):
@@ -200,6 +211,7 @@ def bull_ex():
     print len(a)
 
 
+# level 11
 def odd_even():
     from PIL import Image
     im = Image.open("img/python-challenge-11.jpg")
@@ -219,6 +231,7 @@ def odd_even():
     [imgs[i].save('img/python-challenge-11-%d.jpg' % i) for i in xrange(2)]
 
 
+# level 12
 def evil():
     f = open('files/evil2.gfx', 'rb+')
     content = f.read()
@@ -230,6 +243,7 @@ def evil():
         f.close()
 
 
+# level 13
 def disproportional():
     import xmlrpclib
     xml_rpc = xmlrpclib.ServerProxy("http://www.pythonchallenge.com/pc/phonebook.php")
@@ -238,6 +252,7 @@ def disproportional():
     print xml_rpc.phone('Bert')
 
 
+# level 14
 def italy_error():
     from PIL import Image
     org_img = Image.open('img/wire.png')
@@ -289,6 +304,7 @@ def italy():
     new_img.save('img/wire-cat.png')
 
 
+# level 15
 # run in python 3.0+
 def uzi():
     from datetime import datetime
@@ -303,6 +319,7 @@ def uzi():
     print ("%d-01-17" % match_year[-2])
 
 
+# level 16
 def mozart():
     from PIL import Image
     org_img = Image.open('img/mozart.gif')
@@ -322,6 +339,7 @@ def mozart():
     new_img.save("img/romance.gif")
 
 
+# level 17
 def romance():
     import urllib2
     import cookielib
@@ -366,6 +384,7 @@ def romance():
     print violin_source
 
 
+# level 18
 def balloons():
     import difflib
     f_delta = open('files/delta.txt', 'r+')
@@ -400,6 +419,7 @@ def balloons():
     common_pic.close()
 
 
+# level 19
 def hex_bin():
     import base64
     import wave
@@ -423,6 +443,7 @@ def hex_bin():
     reverse.close()
 
 
+# level 20
 def idiot2():
     pic_url = "http://www.pythonchallenge.com/pc/hex/unreal.jpg"
     next_range = 30203
@@ -470,6 +491,54 @@ def idiot2():
             is_download = True
 
 
+# level 21
+def package():
+    import bz2
+    import zlib
+
+    data = open("files/invader/package.pack", "rb+").read()
+    result = []
+    while True:
+        if data.startswith("x\x9c"):
+            data = zlib.decompress(data)
+            result.append(" ")
+        elif data.startswith("BZ"):
+            data = bz2.decompress(data)
+            result.append("#")
+        elif data.endswith("\x9cx"):
+            data = data[::-1]
+            result.append("\n")
+        elif data.endswith("ZB"):
+            data = data[::-1]
+            result.append("*")
+        else:
+            break
+
+    print "".join(result)
+
+
+# level 22
+def copper():
+    from PIL import Image, ImageDraw, ImageSequence
+    org_img = Image.open("img/white.gif")
+    new_img = Image.new('RGB', org_img.size, "black")
+    new_img_draw = ImageDraw.Draw(new_img)
+    x = 0
+    y = 0
+    for s in ImageSequence.Iterator(org_img):
+        left, upper, right, lower = org_img.getbbox()
+        dx = left-100
+        dy = upper-100
+        x += dx
+        y += dy
+        if dx == dy == 0:
+            x += 20
+            y += 30
+        new_img_draw.point((x, y))
+
+    new_img.save("img/copper.png")
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -493,7 +562,9 @@ def challenge():
     # balloons()
     # hex_bin()
     # hex_bin()
-    idiot2()
+    # idiot2()
+    # package()
+    copper()
     pass
 
 if __name__ == "__main__":
