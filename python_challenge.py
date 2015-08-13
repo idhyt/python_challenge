@@ -423,6 +423,53 @@ def hex_bin():
     reverse.close()
 
 
+def idiot2():
+    pic_url = "http://www.pythonchallenge.com/pc/hex/unreal.jpg"
+    next_range = 30203
+    end_range = 2123456789
+    while next_range <= end_range:
+        headers = {
+            "Authorization": "Basic YnV0dGVyOmZseQ==",
+            "Range": "bytes=%d-" % next_range
+        }
+        img = requests.get(pic_url, headers=headers)
+        if img.status_code == 206:
+            print "range : %d -> %s" % (next_range, img.text)
+            content_range = img.headers.get("Content-Range")
+            next_range = re.findall(r"bytes.+-(\d+)/", content_range)[0]
+            next_range = int(next_range) + 1
+        else:
+            break
+
+    # reverse
+    cur_range = 2123456789
+    end_range = 2123456789
+    is_download = False
+    while cur_range <= end_range:
+        headers = {
+            "Authorization": "Basic YnV0dGVyOmZseQ==",
+            "Range": "bytes=%d-" % cur_range
+        }
+        img = requests.get(pic_url, headers=headers)
+        if img.status_code == 206:
+            if is_download is True:
+                open("files/invader.zip", "wb").write(img.content)
+                break
+
+            print "range : %d -> %s" % (cur_range, img.text)
+            content_range = img.headers.get("Content-Range")
+            cur_range = re.findall(r"bytes (\d+)-", content_range)[0]
+            cur_range = int(cur_range) - 1
+
+            img_text = img.text
+            result = [text_[::-1] for text_ in img_text.split()[::-1]]
+            print " ".join(result)
+        elif img.status_code == 416:
+            cur_range = img_text.split()[-1].strip(".")
+            cur_range = int(cur_range)
+            is_download = True
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -445,7 +492,8 @@ def challenge():
     # romance()
     # balloons()
     # hex_bin()
-    hex_bin()
+    # hex_bin()
+    idiot2()
     pass
 
 if __name__ == "__main__":
