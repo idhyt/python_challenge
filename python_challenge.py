@@ -539,6 +539,125 @@ def copper():
     new_img.save("img/copper.png")
 
 
+# level 23
+def bonus():
+    def shift(str_value, shift_num):
+        ret_list = []
+        alphas = list(str_value)
+        for alpha in alphas:
+            temp_ord = ord(alpha) + shift_num
+            if 97 <= temp_ord <= 122:
+                ret_list.append(chr(temp_ord))
+            elif temp_ord > 122:
+                ret_list.append(chr(temp_ord - 122 + 96))
+            else:
+                ret_list.append(" ")
+        return "".join(ret_list)
+
+    org_str = "va gur snpr bs jung"
+    for i in range(1, 26):
+        print ">>%d -> %s" % (i, shift(org_str, i))
+
+
+# level 24
+def ambiguity():
+    import Image
+    org_img = Image.open("img/maze.png").getdata()
+    org_img_size = org_img.size
+    new_img = Image.new("RGBA", org_img_size, "black")
+    start_pos, end_pos = None, None
+    start_pos_count, end_pos_count = 0, 0
+    for x in range(org_img_size[0]):
+        if org_img.getpixel((x, 0))[0] == 0:
+            start_pos = (x, 0)
+            start_pos_count += 1
+        if org_img.getpixel((x, org_img_size[1]-1))[0] == 0:
+            end_pos = (x, org_img_size[1]-1)
+            end_pos_count += 1
+
+    if start_pos is None or end_pos is None or start_pos_count != 1 or end_pos_count != 1:
+        print "[error] : get start pos or end pos error!"
+        return False
+    print "[*] start_pos: %s and end_pos: %s" % (start_pos, end_pos)
+
+    path = []
+    whole_path = []
+
+    # 右 下 左 上
+    dire = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+    wall = (255,)*4
+
+    while start_pos != end_pos:
+        org_img.putpixel(start_pos, wall)
+        flag = 0
+        new_pos = start_pos
+        for offset in dire:
+            try:
+                pp = (start_pos[0]+offset[0], start_pos[1]+offset[1])
+                if org_img.getpixel(pp) != wall:
+                    flag += 1
+                    new_pos = pp
+            except Exception, e:
+                print str(e)
+                pass
+        # 未找到下个出口
+        if flag == 0:
+            if not path:
+                path = whole_path.pop()
+                continue
+            start_pos = path[0]
+            path = []
+        # 分岔口,找到多个像素点,备份之前的坐标队列,以此分岔口作为新的入口点
+        elif flag > 1:
+            whole_path.append(path)
+            path = [start_pos]
+            start_pos = new_pos
+        # 找到唯一出口,flag = 1
+        else:
+            path.append(start_pos)
+            start_pos = new_pos
+
+    path.append(start_pos)
+    whole_path.append(path)
+
+    org_img = Image.open("img/maze.png").getdata()
+    data = []
+    for path in whole_path:
+        for k in path:
+            new_img.putpixel(k, wall)
+            data.append(org_img.getpixel(k)[0])
+
+    out = open("files/out24.zip", "wb")
+    for i in data[1::2]:
+        out.write(chr(i))
+    out.close()
+    new_img.save("img/out24.png")
+
+
+# level 25
+def lake():
+    from PIL import Image
+    import requests
+    import base64
+    import StringIO
+    import wave
+
+    headers = {
+            "Authorization": "Basic %s" % base64.encodestring("butter:fly").replace("\n", "")
+            }
+    wave_url = 'http://www.pythonchallenge.com/pc/hex/lake%i.wav'
+    new_img = Image.new('RGB', (300, 300))
+    for i in range(25):
+        print "%i/%i" % (i + 1, 25)
+        wave_content = requests.get(wave_url % (i + 1), headers=headers).content
+        data = wave.open(StringIO.StringIO(wave_content))
+        patch = Image.fromstring('RGB', (60, 60), data.readframes(data.getnframes()))
+        pos = (60 * (i % 5), 60 * (i / 5))
+        new_img.paste(patch, pos)
+
+    new_img.save("img/out25.jpg")
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -564,7 +683,10 @@ def challenge():
     # hex_bin()
     # idiot2()
     # package()
-    copper()
+    # copper()
+    # bonus()
+    # ambiguity()
+    lake()
     pass
 
 if __name__ == "__main__":
