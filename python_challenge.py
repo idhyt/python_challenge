@@ -658,6 +658,49 @@ def lake():
     new_img.save("img/out25.jpg")
 
 
+# level 26
+def decent():
+    import hashlib
+    f_content = open("files/mybroken.zip", "rb").read()
+    for i in range(len(f_content)):
+        for j in range(256):
+            new_content = "".join([f_content[:i], chr(j), f_content[i+1:]])
+            if hashlib.md5(new_content).hexdigest() == "bbb8b499a0eef99b52c7f13f4e78c24b":
+                open("files/mybroken_new.zip", "wb").write(new_content)
+                print "offset %d -> %d" % (i, j)
+
+
+# level 27
+def speedboat():
+    import Image
+    import string
+    import bz2
+    import keyword
+    img = Image.open("img/zigzag.gif")
+    img_content = img.tostring()
+    img_plt = img.palette.getdata()[1][::3]
+    trans = string.maketrans("".join([chr(i) for i in range(256)]), img_plt)
+    img_tran = img_content.translate(trans)
+
+    # compare
+    diff = ["", ""]
+    img = Image.new("1", img.size, 0)
+    for i in range(1, len(img_content)):
+        if img_content[i] != img_tran[i-1]:
+            diff[0] += img_content[i]
+            diff[1] += img_tran[i-1]
+            img.putpixel(((i-1) % img.size[0], (i-1)/img.size[0]), 1)
+    img.save("img/out27.png")
+    text = bz2.decompress(diff[0])
+
+    # extract key
+    for i in text.split():
+        if not keyword.iskeyword(i):
+            print i
+
+    pass
+
+
 def challenge():
     # print calc()
     # print map_()
@@ -686,7 +729,9 @@ def challenge():
     # copper()
     # bonus()
     # ambiguity()
-    lake()
+    # lake()
+    # decent()
+    speedboat()
     pass
 
 if __name__ == "__main__":
